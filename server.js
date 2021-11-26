@@ -34,7 +34,7 @@ const dbSSDs = collection(database, 'SSDs')
 
 getDocs(dbSSDs).then((snapshot) => {
     let books = []
-    snapshot.docs.forEach(doc => books.push({...doc.data()}))
+    snapshot.docs.forEach(doc => books.push({docId: doc.id, ...doc.data()}))
     console.log(books)
 }).catch(err => {
     console.log(err)

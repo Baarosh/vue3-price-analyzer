@@ -3,22 +3,22 @@ const axios = require('axios')
 const dayjs = require('dayjs')
 const { JSDOM } = require('jsdom')
 const { initializeApp  } = require('firebase/app');
-const { getFirestore, doc, setDoc, collection, addDoc,  getDocs, Timestamp } = require('firebase/firestore');
+const { getFirestore, doc, setDoc, writeBatch, collection, addDoc,  getDocs, Timestamp } = require('firebase/firestore');
 
-const path = __dirname + '/dist'
+// const path = __dirname + '/dist'
 
-const app = express()
-app.use(express.static(path))
+// const app = express()
+// app.use(express.static(path))
 
-app.get('/', (request, response) => {
-    response.sendFile(path + "index.html")
-})
+// app.get('/', (request, response) => {
+//     response.sendFile(path + "index.html")
+// })
 
-const port = process.env.PORT || 5000
+// const port = process.env.PORT || 5000
 
-app.listen(port, () => {
-    console.log(`Server is listening on PORT: ${port}...`)
-})
+// app.listen(port, () => {
+//     console.log(`Server is listening on PORT: ${port}...`)
+// })
 
 const firebaseConfig = {
     apiKey: "AIzaSyAdS65mP-qB1Qgi0xz83zCqeXj8zTlqJV8",
@@ -32,10 +32,14 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 const db = getFirestore()
 
-async function fetchSSDs(collectionName, containerClass, priceClass, numberOfPages) {
+async function fetchSSDs(collectionName, containerClass, priceClass) {
+    const batch = writeBatch(db)
 
-    for(let i = 1; i <= numberOfPages ; i+=1) {
-        const url = `https://www.x-kom.pl/g-5/c/1779-dyski-ssd.html?page=${numberOfPages}&per_page=90&sort_by=rating_desc`;
+    let page = 1
+    let numberOfPages = 1
+
+    do {
+        const url = `https://www.x-kom.pl/g-5/c/1779-dyski-ssd.html?page=${page}&per_page=60&sort_by=rating_desc`;
         const {data: html} = await axios.get(url, {
             headers: {
                 'accept': 'application/json, text/plain, */*',
@@ -47,35 +51,45 @@ async function fetchSSDs(collectionName, containerClass, priceClass, numberOfPag
         const dom = new JSDOM(html);
 
         const container = dom.window.document.querySelectorAll(containerClass);
+        numberOfPages = parseInt(dom.window.document.querySelector('.sc-11oikyw-2').textContent.split(' ')[1],10)
+        if (numberOfPages > 4) numberOfPages = 4
 
         for (const c of container) {
             const productId =c.querySelector('a').getAttribute('href').slice(3,9);
             const productName = c.querySelector('h3').getAttribute('title');
-            const productPrice = parseFloat(c.querySelector(priceClass).textContent)
+            const productPrice = parseFloat(c.querySelector(priceClass).textContent.split(',')[0].replace(/ /, ''))
             const timeStamp = dayjs().format()
 
             const productRef = doc(db, collectionName, productId)
             const productMeasuresRef = doc(db, `${collectionName}/${productId}/Measures`, timeStamp)
 
-            await setDoc(productRef, {
+            batch.set(productRef, {
                 productId,
                 productName,
             })
 
-            await setDoc(productMeasuresRef, {
+            batch.set(productMeasuresRef, {
                 timeStamp,
                 productPrice
             })
+            console.log(productId, productName, productPrice, timeStamp)
         }
-    }
+        page+=1
+    } while (page <= numberOfPages)
+
+    console.log(numberOfPages)
+    await batch.commit();
 }
 
-async function runInterval(time) {
+async function runSSDs(time) {
     const interval = setInterval(async () => {
         console.log('SSDs Interval is starting...')
-        await fetchSSDs('SSDs', '.sc-1yu46qn-4', '.sc-6n68ef-3',2).then(() => console.log('Fetch is completed.')).catch(err=> clearInterval(interval))
+        await fetchSSDs('SSDs', '.sc-1yu46qn-4', '.sc-6n68ef-3').then(() => console.log('Fetch is completed.')).catch(err=> {
+            clearInterval(interval)
+            console.log(err)
+        })
         console.log('SSDs Interval is ending...')
     },time)
 }
 
-// runInterval(40000)
+// runSSDs(40000)

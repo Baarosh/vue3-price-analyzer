@@ -3,22 +3,22 @@ const axios = require('axios')
 const dayjs = require('dayjs')
 const { JSDOM } = require('jsdom')
 const { initializeApp  } = require('firebase/app');
-const { getFirestore, collection, addDoc, doc, setDoc, getDocs, Timestamp } = require('firebase/firestore');
+const { getFirestore, doc, setDoc, collection, addDoc,  getDocs, Timestamp } = require('firebase/firestore');
 
-// const path = __dirname + '/dist'
+const path = __dirname + '/dist'
 
-// const app = express()
-// app.use(express.static(path))
+const app = express()
+app.use(express.static(path))
 
-// app.get('/', (request, response) => {
-//     response.sendFile(path + "index.html")
-// })
+app.get('/', (request, response) => {
+    response.sendFile(path + "index.html")
+})
 
-// const port = process.env.PORT || 5000
+const port = process.env.PORT || 5000
 
-// app.listen(port, () => {
-//     console.log(`Server is listening on PORT: ${port}...`)
-// })
+app.listen(port, () => {
+    console.log(`Server is listening on PORT: ${port}...`)
+})
 
 const firebaseConfig = {
     apiKey: "AIzaSyAdS65mP-qB1Qgi0xz83zCqeXj8zTlqJV8",
@@ -70,12 +70,12 @@ async function fetchSSDs(collectionName, containerClass, priceClass, numberOfPag
     }
 }
 
-async function runInterval() {
+async function runInterval(time) {
     const interval = setInterval(async () => {
-        console.log('start interval func')
-        await fetchSSDs('SSDs', '.sc-1yu46qn-4', '.sc-6n68ef-3',1).then(() => console.log('Done successfully')).catch(err=> clearInterval(interval))
-        console.log('end interval func')
-    },20000)
+        console.log('SSDs Interval is starting...')
+        await fetchSSDs('SSDs', '.sc-1yu46qn-4', '.sc-6n68ef-3',2).then(() => console.log('Fetch is completed.')).catch(err=> clearInterval(interval))
+        console.log('SSDs Interval is ending...')
+    },time)
 }
 
-runInterval()
+runInterval(40000)

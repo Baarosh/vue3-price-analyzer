@@ -9,14 +9,16 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "body-parser": "^1.19.0",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
+    "dayjs": "^1.10.7",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "firebase": "^9.5.0",
     "firebase-admin": "^10.0.0",
-    "moment": "^2.29.1",
+    "jsdom": "^19.0.0",
     "morgan": "^1.10.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",

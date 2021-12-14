@@ -78,4 +78,4 @@ async function runInterval(time) {
     },time)
 }
 
-runInterval(40000)
+// runInterval(40000)

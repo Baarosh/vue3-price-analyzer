@@ -7,6 +7,7 @@ import runCPUs from './webscrapping/CPUs';
 import runRAMs from './webscrapping/RAMs';
 import runMOBOs from './webscrapping/MOBOs';
 import runCASEs from './webscrapping/CASEs';
+import startKeepAlive from './idlingPrevention'
 
 const path = __dirname + '/dist'
 
@@ -22,6 +23,8 @@ const port = process.env.PORT || 5000
 app.listen(port, () => {
     console.log(`Server is listening on PORT: ${port}...`)
 })
+
+startKeepAlive()
 
 initializeApp(firebaseConfig);
 

@@ -1,6 +1,6 @@
-import { get } from 'http'; //importing http
+import { get } from 'http'
 
-function startKeepAlive() {
+function initializeNoIdle() {
     setInterval(function() {
         var options = {
             host: 'vue3-price-analyzer.herokuapp.com',
@@ -22,4 +22,4 @@ function startKeepAlive() {
     }, 20 * 60 * 1000); // load every 20 minutes
 }
 
-export default startKeepAlive
+export default initializeNoIdle

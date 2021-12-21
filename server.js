@@ -1,9 +1,9 @@
-import initializeExpress from './utilities/express/ex.config'
-import initializeNoIdle from './noidle'
-import { initalizeFirebaseConnection, uploadToFirebase } from './utilities/firebase/fb.functions'
-import { initalizeMySQLConnection, uploadToMySQL } from './utilities/mysql/ms.functions'
+import initializeExpress from './server/utilities/express/ex.config'
+import initializeNoIdle from './server/noidle'
+import { initalizeFirebaseConnection, uploadToFirebase } from './server/utilities/firebase/fb.functions'
+import { initalizeMySQLConnection, uploadToMySQL } from './server/utilities/mysql/ms.functions'
 import { get } from 'axios'
-import { JSDOM } from 'JSDOM'
+import { JSDOM } from 'jsdom'
 import dayjs from 'dayjs'
 
 async function runFetching(sourceUrl) {

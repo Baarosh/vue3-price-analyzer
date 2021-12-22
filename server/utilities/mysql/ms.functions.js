@@ -3,7 +3,7 @@ import mySQLConfig from './ms.config'
 
 export function initalizeMySQLConnection() {
     console.log('*MS--> Connected.*');
-    return mysql.createConnection(mySQLConfig);
+    return mysql.createPool(mySQLConfig);
 }
 
 export async function uploadToMySQL(collectionName, data, connection) {

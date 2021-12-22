@@ -19,8 +19,8 @@ export async function uploadToFirebase(collectionName, data) {
 
         for(let j = 1; j <= 250; j+=1) {
             if (data[index]) {
-                const productRef = doc(db, collectionName, data[index][0])
-                const productMeasuresRef = doc(db, `${collectionName}/${data[index][0]}/Measures`, data[index][3])
+                const productRef = doc(db, collectionName, data[index][0]+'')
+                const productMeasuresRef = doc(db, `${collectionName}/${data[index][0]+''}/Measures`, data[index][3])
 
                 batch.set(productRef, {
                     productId: data[index][0],
@@ -35,7 +35,7 @@ export async function uploadToFirebase(collectionName, data) {
             } else break
         }
         try {
-            await batch.commit().then(() => console.log('good')).catch((e) => console.log('bad',e))
+            await batch.commit()
         } catch(e) {
             console.log(e)
         }

@@ -1,6 +1,6 @@
 import initializeExpress from './server/utilities/express/ex.config'
 import initializeNoIdle from './server/noidle'
-// import { initalizeFirebaseConnection, uploadToFirebase } from './server/utilities/firebase/fb.functions'
+import { initalizeFirebaseConnection, uploadToFirebase } from './server/utilities/firebase/fb.functions'
 import { initalizeMySQLConnection, uploadToMySQL } from './server/utilities/mysql/ms.functions'
 import { get } from 'axios'
 import { JSDOM } from 'jsdom'
@@ -62,35 +62,35 @@ async function runFetching(sourceUrl) {
 async function runService(name, FBName, MSName, MSconnection, url, time) {
     console.log(`${name}-> Service started.`)
 
-    const timeout = setTimeout(async () => {
-        console.log(`${name}-> Starting interval...`)
+    // const timeout = setTimeout(async () => {
+    //     console.log(`${name}-> Starting interval...`)
 
-        try {
-            const data = await runFetching(url)
-            console.log(`${name}-> Fetch OK`)
+    //     try {
+    //         const data = await runFetching(url)
+    //         console.log(`${name}-> Fetch OK`)
 
-            try {
-                // await uploadToFirebase(FBName, data)
-                // console.log(`${name}-> FB Upload OK`)
-            }
-            catch(e) {
-                console.log(e)
-            }
-            try {
-                await uploadToMySQL(MSName, data, MSconnection)
-                console.log(`${name}-> MS Upload OK`)
-            }
-            catch(e) {
-                console.log(e)
-            }
-        }
-        catch(e) {
-            console.log(e)
-        }
-        finally {
-            console.log(`${name}-> Finishing interval...`)
-        }
-    }, time - (1 * 1000 * 60 * 60 * 3))
+    //         try {
+    //             await uploadToFirebase(FBName, data)
+    //             console.log(`${name}-> FB Upload OK`)
+    //         }
+    //         catch(e) {
+    //             console.log(e)
+    //         }
+    //         try {
+    //             await uploadToMySQL(MSName, data, MSconnection)
+    //             console.log(`${name}-> MS Upload OK`)
+    //         }
+    //         catch(e) {
+    //             console.log(e)
+    //         }
+    //     }
+    //     catch(e) {
+    //         console.log(e)
+    //     }
+    //     finally {
+    //         console.log(`${name}-> Finishing interval...`)
+    //     }
+    // }, time - (1 * 1000 * 60 * 60 * 12))
 
     const interval = setInterval(async () => {
         console.log(`${name}-> Starting interval...`)
@@ -99,8 +99,8 @@ async function runService(name, FBName, MSName, MSconnection, url, time) {
             const data = await runFetching(url)
             console.log(`${name}-> Fetch OK`)
             try {
-                // await uploadToFirebase(FBName, data)
-                // console.log(`${name}-> FB Upload OK`)
+                await uploadToFirebase(FBName, data)
+                console.log(`${name}-> FB Upload OK`)
             }
             catch(e) {
                 console.log(e)
@@ -125,7 +125,7 @@ async function runService(name, FBName, MSName, MSconnection, url, time) {
 initializeExpress()
 initializeNoIdle()
 
-// initalizeFirebaseConnection()
+initalizeFirebaseConnection()
 const MSconnection = initalizeMySQLConnection()
 
 const ssdURL = 'https://www.x-kom.pl/g-5/c/1779-dyski-ssd.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
@@ -141,17 +141,17 @@ const monitorURL = 'https://www.x-kom.pl/g-6/c/15-monitory.html?page=XXXXXX&per_
 const mouseURL = 'https://www.x-kom.pl/g-6/c/31-myszki.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 const keyboardURL = 'https://www.x-kom.pl/g-6/c/32-klawiatury.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 
-runService('SSDs', 'SSDs', 'ssd', MSconnection, ssdURL, 1 * 1000 * 60 * 60 * 3)
-runService('GPUs', 'GPUs', 'gpu', MSconnection, gpuURL, 1 * 1000 * 60 * 60 * 3)
-runService('CPUs', 'CPUs', 'cpu', MSconnection, cpuURL, 1 * 1000 * 61 * 60 * 3)
-runService('MOBOs', 'MOBOs', 'mobo', MSconnection, moboURL, 1 * 1000 * 61 * 60 * 3)
-runService('CASEs', 'CASEs', 'case', MSconnection, caseURL, 1 * 1000 * 62 * 60 * 3)
-runService('RAMs', 'RAMs', 'ram', MSconnection, ramURL, 1 * 1000 * 62 * 60 * 3)
-runService('PSs', 'PSs', 'ps', MSconnection, psURL, 1 * 1000 * 63 * 60 * 3)
-runService('CPUFANs', 'CPUFANs', 'cpufan', MSconnection, cpufanURL, 1 * 1000 * 63 * 60 * 3)
-runService('FANs', 'FANs', 'fan', MSconnection, fanURL, 1 * 1000 * 64 * 60 * 3)
-runService('MONITORs', 'MONITORs', 'monitor', MSconnection, monitorURL, 1 * 1000 * 64 * 60 * 3)
-runService('MOUSEs', 'MOUSEs', 'mouse', MSconnection, mouseURL, 1 * 1000 * 65 * 60 * 3)
-runService('KEYBOARDs', 'KEYBOARDs', 'keyboard', MSconnection, keyboardURL, 1 * 1000 * 65 * 60 * 3)
+runService('SSDs', 'SSDs', 'ssd', MSconnection, ssdURL, 1 * 1000 * 60 * 60 * 12)
+runService('GPUs', 'GPUs', 'gpu', MSconnection, gpuURL, 1 * 1000 * 60 * 60 * 12)
+runService('CPUs', 'CPUs', 'cpu', MSconnection, cpuURL, 1 * 1000 * 60 * 60 * 12)
+runService('MOBOs', 'MOBOs', 'mobo', MSconnection, moboURL, 1 * 1000 * 60 * 60 * 12)
+runService('CASEs', 'CASEs', 'case', MSconnection, caseURL, 1 * 1000 * 61 * 60 * 12)
+runService('RAMs', 'RAMs', 'ram', MSconnection, ramURL, 1 * 1000 * 61 * 60 * 12)
+runService('PSs', 'PSs', 'ps', MSconnection, psURL, 1 * 1000 * 61 * 60 * 12)
+runService('CPUFANs', 'CPUFANs', 'cpufan', MSconnection, cpufanURL, 1 * 1000 * 61 * 60 * 12)
+runService('FANs', 'FANs', 'fan', MSconnection, fanURL, 1 * 1000 * 62 * 60 * 12)
+runService('MONITORs', 'MONITORs', 'monitor', MSconnection, monitorURL, 1 * 1000 * 62 * 60 * 12)
+runService('MOUSEs', 'MOUSEs', 'mouse', MSconnection, mouseURL, 1 * 1000 * 62 * 60 * 12)
+runService('KEYBOARDs', 'KEYBOARDs', 'keyboard', MSconnection, keyboardURL, 1 * 1000 * 62 * 60 * 12)
 
 const watcher = setInterval(() => console.log('watching...'), 1000*30)

@@ -1,7 +1,7 @@
 import express from 'express';
 
 function initializeExpress() {
-    const path = __dirname + '/dist'
+    const path = __dirname + '../../../dist'
     const port = process.env.PORT || 5000
     const app = express()
 

@@ -8,10 +8,6 @@ export function initalizeMySQLConnection() {
 
 export async function uploadToMySQL(collectionName, data, connection) {
     try {
-        connection.connect((err) => {
-            if (err) throw err;
-            });
-
         const dimData = data.map((array) => [array[0], array[1]])
         const factData = data.map((array) => [array[0], array[2], array[3]])
         const dimName = `d_${collectionName}`

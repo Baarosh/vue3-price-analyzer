@@ -1,6 +1,6 @@
 import initializeExpress from './server/utilities/express/ex.config'
 import initializeNoIdle from './server/noidle'
-import { initalizeFirebaseConnection, uploadToFirebase } from './server/utilities/firebase/fb.functions'
+// import { initalizeFirebaseConnection, uploadToFirebase } from './server/utilities/firebase/fb.functions'
 import { initalizeMySQLConnection, uploadToMySQL } from './server/utilities/mysql/ms.functions'
 import { get } from 'axios'
 import { JSDOM } from 'jsdom'
@@ -33,7 +33,7 @@ async function runFetching(sourceUrl) {
             const productId = parseInt(c.querySelector('a').getAttribute('href').slice(3,9));
             const productName = c.querySelector('h3').getAttribute('title');
             let productPrice = null
-            const timeStamp = dayjs().format()
+            const timeStamp = dayjs().format("YYYY-MM-DD hh:mm:ss")
 
             try {
             productPrice = parseFloat(c.querySelector('.sc-6n68ef-3').textContent.split(',')[0].replace(/ /, ''))
@@ -120,14 +120,12 @@ async function runService(name, FBName, MSName, MSconnection, url, time) {
             console.log(`${name}-> Finishing interval...`)
         }
     }, time)
-
-    const watcher = setInterval(() => console.log('watching...'), 1000*30)
 }
 
 initializeExpress()
 initializeNoIdle()
 
-initalizeFirebaseConnection()
+// initalizeFirebaseConnection()
 const MSconnection = initalizeMySQLConnection()
 
 const ssdURL = 'https://www.x-kom.pl/g-5/c/1779-dyski-ssd.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
@@ -155,3 +153,5 @@ runService('FANs', 'FANs', 'fan', MSconnection, fanURL, 1 * 1000 * 64 * 60 * 3)
 runService('MONITORs', 'MONITORs', 'monitor', MSconnection, monitorURL, 1 * 1000 * 64 * 60 * 3)
 runService('MOUSEs', 'MOUSEs', 'mouse', MSconnection, mouseURL, 1 * 1000 * 65 * 60 * 3)
 runService('KEYBOARDs', 'KEYBOARDs', 'keyboard', MSconnection, keyboardURL, 1 * 1000 * 65 * 60 * 3)
+
+const watcher = setInterval(() => console.log('watching...'), 1000*30)

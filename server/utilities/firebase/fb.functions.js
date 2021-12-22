@@ -1,7 +1,6 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, writeBatch } from 'firebase/firestore';
-import firebaseConfig from './fb.config'
-
+import firebaseConfig from './fb.config';
 
 export function initalizeFirebaseConnection() {
     initializeApp(firebaseConfig);

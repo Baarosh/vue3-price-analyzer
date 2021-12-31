@@ -1,6 +1,5 @@
 import initializeExpress from './server/utilities/express/ex.config'
 import initializeNoIdle from './server/noidle'
-// import { initalizeFirebaseConnection, uploadToFirebase } from './server/utilities/firebase/fb.functions'
 import { initalizeMySQLConnection, uploadToMySQL } from './server/utilities/mysql/ms.functions'
 import { get } from 'axios'
 import { JSDOM } from 'jsdom'
@@ -33,7 +32,7 @@ async function runFetching(sourceUrl) {
             const productId = parseInt(c.querySelector('a').getAttribute('href').slice(3,9));
             const productName = c.querySelector('h3').getAttribute('title');
             let productPrice = null
-            const timeStamp = dayjs().format("YYYY-MM-DD hh:mm:ss")
+            const timeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss")
 
             try {
             productPrice = parseFloat(c.querySelector('.sc-6n68ef-3').textContent.split(',')[0].replace(/ /, ''))
@@ -69,13 +68,6 @@ async function runService(name, FBName, MSName, url, time) {
             const data = await runFetching(url)
             console.log(`${name}-> Fetch OK`)
 
-            // try {
-            //     await uploadToFirebase(FBName, data)
-            //     console.log(`${name}-> FB Upload OK`)
-            // }
-            // catch(e) {
-            //     console.log(e)
-            // }
             try {
                 let connection = initalizeMySQLConnection()
 
@@ -102,13 +94,7 @@ async function runService(name, FBName, MSName, url, time) {
         try {
             const data = await runFetching(url)
             console.log(`${name}-> Fetch OK`)
-            // try {
-            //     await uploadToFirebase(FBName, data)
-            //     console.log(`${name}-> FB Upload OK`)
-            // }
-            // catch(e) {
-            //     console.log(e)
-            // }
+
             try {
                 let connection = initalizeMySQLConnection()
 
@@ -133,7 +119,6 @@ async function runService(name, FBName, MSName, url, time) {
 initializeExpress()
 initializeNoIdle()
 
-// initalizeFirebaseConnection()
 
 const ssdURL = 'https://www.x-kom.pl/g-5/c/1779-dyski-ssd.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 const gpuURL = 'https://www.x-kom.pl/g-5/c/345-karty-graficzne.html?page=XXXXXX&per_page=90&sort_by=rating_desc'

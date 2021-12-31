@@ -1,5 +1,4 @@
 import mysql from 'mysql2'
-import Pool from 'mysql2/typings/mysql/lib/Pool';
 import mySQLConfig from './ms.config'
 
 function initalizeMySQLConnection() {

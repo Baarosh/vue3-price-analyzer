@@ -1,10 +1,10 @@
 import ck from 'ckey'
 
 const mySQLConfig = {
-  host: process.env.SQL_HOSTG,
-  user: process.env.SQL_USERG,
-  password: process.env.SQL_PASSWORDG,
-  database: process.env.SQL_DATABASEG
+  host: ck.SQL_HOSTG,
+  user: ck.SQL_USERG,
+  password: ck.SQL_PASSWORDG,
+  database: ck.SQL_DATABASEG
   // port: ck.SQL_PORT
   };
 

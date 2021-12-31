@@ -1,7 +1,7 @@
 import initializeExpress from './server/utilities/express/ex.config'
 import initializeNoIdle from './server/noidle'
 // import { initalizeFirebaseConnection, uploadToFirebase } from './server/utilities/firebase/fb.functions'
-import { uploadToMySQL } from './server/utilities/mysql/ms.functions'
+import { initalizeMySQLConnection, uploadToMySQL } from './server/utilities/mysql/ms.functions'
 import { get } from 'axios'
 import { JSDOM } from 'jsdom'
 import dayjs from 'dayjs'
@@ -77,8 +77,12 @@ async function runService(name, FBName, MSName, url, time) {
             //     console.log(e)
             // }
             try {
-                await uploadToMySQL(MSName, data)
+                let connection = initalizeMySQLConnection()
+
+                await uploadToMySQL(MSName, data, connection)
                 console.log(`${name}-> MS Upload OK`)
+
+                connection.end()
             }
             catch(e) {
                 console.log(e)
@@ -106,8 +110,12 @@ async function runService(name, FBName, MSName, url, time) {
             //     console.log(e)
             // }
             try {
-                await uploadToMySQL(MSName, data)
+                let connection = initalizeMySQLConnection()
+
+                await uploadToMySQL(MSName, data, connection)
                 console.log(`${name}-> MS Upload OK`)
+
+                connection.end()
             }
             catch(e) {
                 console.log(e)

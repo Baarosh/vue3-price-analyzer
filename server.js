@@ -40,7 +40,7 @@ async function runFetching(sourceUrl) {
             } catch(e) {
                 console.log(e)
                 productPrice = 0
-                console.log(productId, productName, productPrice, timeStamp, currentPage)
+                console.log('Error for line', productId, productName, productPrice, timeStamp, currentPage)
             }
 
             results.push([
@@ -62,35 +62,35 @@ async function runFetching(sourceUrl) {
 async function runService(name, FBName, MSName, MSconnection, url, time) {
     console.log(`${name}-> Service started.`)
 
-    // const timeout = setTimeout(async () => {
-    //     console.log(`${name}-> Starting interval...`)
+    const timeout = setTimeout(async () => {
+        console.log(`${name}-> Starting interval...`)
 
-    //     try {
-    //         const data = await runFetching(url)
-    //         console.log(`${name}-> Fetch OK`)
+        try {
+            const data = await runFetching(url)
+            console.log(`${name}-> Fetch OK`)
 
-    //         try {
-    //             await uploadToFirebase(FBName, data)
-    //             console.log(`${name}-> FB Upload OK`)
-    //         }
-    //         catch(e) {
-    //             console.log(e)
-    //         }
-    //         try {
-    //             await uploadToMySQL(MSName, data, MSconnection)
-    //             console.log(`${name}-> MS Upload OK`)
-    //         }
-    //         catch(e) {
-    //             console.log(e)
-    //         }
-    //     }
-    //     catch(e) {
-    //         console.log(e)
-    //     }
-    //     finally {
-    //         console.log(`${name}-> Finishing interval...`)
-    //     }
-    // }, time - (1 * 1000 * 60 * 60 * 12))
+            // try {
+            //     await uploadToFirebase(FBName, data)
+            //     console.log(`${name}-> FB Upload OK`)
+            // }
+            // catch(e) {
+            //     console.log(e)
+            // }
+            try {
+                await uploadToMySQL(MSName, data, MSconnection)
+                console.log(`${name}-> MS Upload OK`)
+            }
+            catch(e) {
+                console.log(e)
+            }
+        }
+        catch(e) {
+            console.log(e)
+        }
+        finally {
+            console.log(`${name}-> Finishing interval...`)
+        }
+    }, time - intervalTime)
 
     const interval = setInterval(async () => {
         console.log(`${name}-> Starting interval...`)
@@ -98,13 +98,13 @@ async function runService(name, FBName, MSName, MSconnection, url, time) {
         try {
             const data = await runFetching(url)
             console.log(`${name}-> Fetch OK`)
-            try {
-                await uploadToFirebase(FBName, data)
-                console.log(`${name}-> FB Upload OK`)
-            }
-            catch(e) {
-                console.log(e)
-            }
+            // try {
+            //     await uploadToFirebase(FBName, data)
+            //     console.log(`${name}-> FB Upload OK`)
+            // }
+            // catch(e) {
+            //     console.log(e)
+            // }
             try {
                 await uploadToMySQL(MSName, data, MSconnection)
                 console.log(`${name}-> MS Upload OK`)
@@ -125,7 +125,7 @@ async function runService(name, FBName, MSName, MSconnection, url, time) {
 initializeExpress()
 initializeNoIdle()
 
-initalizeFirebaseConnection()
+// initalizeFirebaseConnection()
 const MSconnection = initalizeMySQLConnection()
 
 const ssdURL = 'https://www.x-kom.pl/g-5/c/1779-dyski-ssd.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
@@ -141,17 +141,26 @@ const monitorURL = 'https://www.x-kom.pl/g-6/c/15-monitory.html?page=XXXXXX&per_
 const mouseURL = 'https://www.x-kom.pl/g-6/c/31-myszki.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 const keyboardURL = 'https://www.x-kom.pl/g-6/c/32-klawiatury.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 
-runService('SSDs', 'SSDs', 'ssd', MSconnection, ssdURL, 1 * 1000 * 60 * 60 * 12)
-runService('GPUs', 'GPUs', 'gpu', MSconnection, gpuURL, 1 * 1000 * 60 * 60 * 12)
-runService('CPUs', 'CPUs', 'cpu', MSconnection, cpuURL, 1 * 1000 * 60 * 60 * 12)
-runService('MOBOs', 'MOBOs', 'mobo', MSconnection, moboURL, 1 * 1000 * 60 * 60 * 12)
-runService('CASEs', 'CASEs', 'case', MSconnection, caseURL, 1 * 1000 * 61 * 60 * 12)
-runService('RAMs', 'RAMs', 'ram', MSconnection, ramURL, 1 * 1000 * 61 * 60 * 12)
-runService('PSs', 'PSs', 'ps', MSconnection, psURL, 1 * 1000 * 61 * 60 * 12)
-runService('CPUFANs', 'CPUFANs', 'cpufan', MSconnection, cpufanURL, 1 * 1000 * 61 * 60 * 12)
-runService('FANs', 'FANs', 'fan', MSconnection, fanURL, 1 * 1000 * 62 * 60 * 12)
-runService('MONITORs', 'MONITORs', 'monitor', MSconnection, monitorURL, 1 * 1000 * 62 * 60 * 12)
-runService('MOUSEs', 'MOUSEs', 'mouse', MSconnection, mouseURL, 1 * 1000 * 62 * 60 * 12)
-runService('KEYBOARDs', 'KEYBOARDs', 'keyboard', MSconnection, keyboardURL, 1 * 1000 * 62 * 60 * 12)
+const intervalTime = 1 * 1000 * 60 * 60 * 1
+const gap = 15 * 1000
+const timeWatch = 1 * 1000 * 60 * 10
+let watchCounter = 1
 
-const watcher = setInterval(() => console.log('watching...'), 1000*30)
+runService('SSDs', 'SSDs', 'ssd', MSconnection, ssdURL, intervalTime)
+runService('GPUs', 'GPUs', 'gpu', MSconnection, gpuURL, intervalTime + gap)
+runService('CPUs', 'CPUs', 'cpu', MSconnection, cpuURL, intervalTime + gap * 2)
+runService('MOBOs', 'MOBOs', 'mobo', MSconnection, moboURL, intervalTime + gap * 3)
+runService('CASEs', 'CASEs', 'case', MSconnection, caseURL, intervalTime + gap * 4)
+runService('RAMs', 'RAMs', 'ram', MSconnection, ramURL, intervalTime + gap * 5)
+runService('PSs', 'PSs', 'ps', MSconnection, psURL, intervalTime + gap * 6)
+runService('CPUFANs', 'CPUFANs', 'cpufan', MSconnection, cpufanURL, intervalTime + gap * 7)
+runService('FANs', 'FANs', 'fan', MSconnection, fanURL, intervalTime + gap * 8)
+runService('MONITORs', 'MONITORs', 'monitor', MSconnection, monitorURL, intervalTime + gap * 9)
+runService('MOUSEs', 'MOUSEs', 'mouse', MSconnection, mouseURL, intervalTime + gap * 10)
+runService('KEYBOARDs', 'KEYBOARDs', 'keyboard', MSconnection, keyboardURL, intervalTime + gap * 11)
+
+const watcher = setInterval(() => {
+    console.log(`Estimated time left to next interval: ${intervalTime-(timeWatch * watchCounter)}`)
+    watchCounter += 1
+    if (watchCounter > 6) watchCounter = 1
+}, timeWatch)

@@ -1,13 +1,16 @@
 import mysql from 'mysql2'
+import Pool from 'mysql2/typings/mysql/lib/Pool';
 import mySQLConfig from './ms.config'
 
-export function initalizeMySQLConnection() {
+function initalizeMySQLConnection() {
     console.log('*MS--> Connected.*');
     return mysql.createPool(mySQLConfig);
 }
 
-export async function uploadToMySQL(collectionName, data, connection) {
+export async function uploadToMySQL(collectionName, data) {
     try {
+        const connection = initalizeMySQLConnection()
+
         const dimData = data.map((array) => [array[0], array[1]])
         const factData = data.map((array) => [array[0], array[2], array[3]])
         const dimName = `d_${collectionName}`
@@ -18,6 +21,8 @@ export async function uploadToMySQL(collectionName, data, connection) {
 
         await connection.promise().query('INSERT INTO ?? (productId, productPrice, timeStamp) VALUES ?',
         [factName, factData]);
+
+        connection.end()
 
     } catch(e) {
         console.log(e)

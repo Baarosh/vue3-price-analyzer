@@ -1,6 +1,6 @@
 import { get } from 'http'
 
-const timeInterval = 1 * 1000 * 60 * 20
+const timeInterval = 1 * 1000 * 60 * 20 // 20 minutes
 
 function initializeNoIdle() {
     setInterval(function() {

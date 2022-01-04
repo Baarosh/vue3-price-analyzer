@@ -19,10 +19,10 @@ const monitorURL = 'https://www.x-kom.pl/g-6/c/15-monitory.html?page=XXXXXX&per_
 const mouseURL = 'https://www.x-kom.pl/g-6/c/31-myszki.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 const keyboardURL = 'https://www.x-kom.pl/g-6/c/32-klawiatury.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 
-const intervalTime = 1 * 1000 * 60 * 60 * 1
-const gapTime = 30 * 1000
+const intervalTime = 1 * 1000 * 60 * 60 * 4 // 4 hours
+const gapTime = 1 * 1000 * 60 * 2 // 2 minute
 
-const watchTime = 1 * 1000 * 60 * 20
+const watchTime = 1 * 1000 * 60 * 10 // 10 minutes
 let watchCounter = 1
 
 runService('ssd', ssdURL, intervalTime, 0)
@@ -42,7 +42,7 @@ const watcher = setInterval(() => {
     const date1 = dayjs(intervalTime)
     const date2 = dayjs(intervalTime-(intervalTime-(watchTime * watchCounter)))
     const diff = date1.subtract(date2)
-    console.log(`Estimated time left to next interval: ${diff.format('mm')} minutes, ${diff.format('ss')} seconds.`)
+    console.log(`Estimated time left to next interval: ${diff.format('HH')} hours, ${diff.format('mm')} minutes, ${diff.format('ss')} seconds.`)
     watchCounter += 1
     if (watchCounter > 3) watchCounter = 1
 }, watchTime)

@@ -44,5 +44,5 @@ const watcher = setInterval(() => {
     const diff = date1.subtract(date2)
     console.log(`Estimated time left to next interval: ${diff.format('HH')} hours, ${diff.format('mm')} minutes, ${diff.format('ss')} seconds.`)
     watchCounter += 1
-    if (watchCounter > 3) watchCounter = 1
+    if (watchCounter > intervalTime/watchTime) watchCounter = 1
 }, watchTime)

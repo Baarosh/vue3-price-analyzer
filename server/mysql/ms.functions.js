@@ -2,8 +2,11 @@ import mysql from 'mysql2'
 import mySQLConfig from './ms.config'
 
 export function initalizeMySQLConnection() {
-    console.log('*MS--> Connected.*');
-    return mysql.createPool(mySQLConfig);
+    try {
+        return mysql.createPool(mySQLConfig)
+    } catch(e) {
+        console.log(e)
+    }
 }
 
 export async function uploadToMySQL(collectionName, data, connection) {

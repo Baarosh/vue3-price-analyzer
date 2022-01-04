@@ -1,124 +1,10 @@
-import initializeExpress from './utilities/express/ex.config'
+import initializeExpress from './express/ex.config'
 import initializeNoIdle from './noidle'
-import { initalizeMySQLConnection, uploadToMySQL } from './utilities/mysql/ms.functions'
-import { get } from 'axios'
-import { JSDOM } from 'jsdom'
+import runService from './utilities'
 import dayjs from 'dayjs'
-
-async function runFetching(sourceUrl) {
-    const results = []
-    let currentPage = 1
-    let numberOfPages = 0
-
-    do {
-        const url = sourceUrl.replace('XXXXXX', currentPage);
-
-        const {data: html} = await get(url, {
-            headers: {
-                'accept': 'application/json, text/plain, */*',
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36',
-                'origin': 'https://www.x-kom.pl',
-                'referer': 'https://www.x-kom.pl/'
-            }
-        });
-        const dom = new JSDOM(html);
-
-        if (numberOfPages === 0) numberOfPages = parseInt(dom.window.document.querySelector('.sc-11oikyw-2').textContent.split(' ')[1],10)
-
-        const container = dom.window.document.querySelectorAll('.sc-1yu46qn-4');
-
-        for (const c of container) {
-
-            const productId = parseInt(c.querySelector('a').getAttribute('href').slice(3,9));
-            const productName = c.querySelector('h3').getAttribute('title');
-            let productPrice = null
-            const timeStamp = dayjs().format("YYYY-MM-DD HH:mm:ss")
-
-            try {
-            productPrice = parseFloat(c.querySelector('.sc-6n68ef-3').textContent.split(',')[0].replace(/ /, ''))
-            } catch(e) {
-                console.log(e)
-                productPrice = 0
-                console.log('Error for line', productId, productName, productPrice, timeStamp, currentPage)
-            }
-
-            results.push([
-                productId,
-                productName,
-                productPrice,
-                timeStamp
-            ])
-
-            console.log(productId, productName, productPrice, timeStamp, currentPage)
-        }
-        currentPage+=1
-
-        } while (currentPage <= numberOfPages)
-
-    return results
-}
-
-async function runService(name, FBName, MSName, url, time) {
-    console.log(`${name}-> Service started.`)
-
-    const timeout = setTimeout(async () => {
-        console.log(`${name}-> Starting interval...`)
-
-        try {
-            const data = await runFetching(url)
-            console.log(`${name}-> Fetch OK`)
-
-            try {
-                let connection = initalizeMySQLConnection()
-
-                await uploadToMySQL(MSName, data, connection)
-                console.log(`${name}-> MS Upload OK`)
-
-                connection.end()
-            }
-            catch(e) {
-                console.log(e)
-            }
-        }
-        catch(e) {
-            console.log(e)
-        }
-        finally {
-            console.log(`${name}-> Finishing interval...`)
-        }
-    }, time - intervalTime)
-
-    const interval = setInterval(async () => {
-        console.log(`${name}-> Starting interval...`)
-
-        try {
-            const data = await runFetching(url)
-            console.log(`${name}-> Fetch OK`)
-
-            try {
-                let connection = initalizeMySQLConnection()
-
-                await uploadToMySQL(MSName, data, connection)
-                console.log(`${name}-> MS Upload OK`)
-
-                connection.end()
-            }
-            catch(e) {
-                console.log(e)
-            }
-        }
-        catch(e) {
-            console.log(e)
-        }
-        finally {
-            console.log(`${name}-> Finishing interval...`)
-        }
-    }, time)
-}
 
 initializeExpress()
 initializeNoIdle()
-
 
 const ssdURL = 'https://www.x-kom.pl/g-5/c/1779-dyski-ssd.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 const gpuURL = 'https://www.x-kom.pl/g-5/c/345-karty-graficzne.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
@@ -134,25 +20,29 @@ const mouseURL = 'https://www.x-kom.pl/g-6/c/31-myszki.html?page=XXXXXX&per_page
 const keyboardURL = 'https://www.x-kom.pl/g-6/c/32-klawiatury.html?page=XXXXXX&per_page=90&sort_by=rating_desc'
 
 const intervalTime = 1 * 1000 * 60 * 60 * 1
-const gap = 30 * 1000
-const timeWatch = 1 * 1000 * 60 * 10
+const gapTime = 30 * 1000
+
+const watchTime = 1 * 1000 * 60 * 20
 let watchCounter = 1
 
-runService('SSDs', 'SSDs', 'ssd', ssdURL, intervalTime)
-runService('GPUs', 'GPUs', 'gpu', gpuURL, intervalTime + gap)
-runService('CPUs', 'CPUs', 'cpu', cpuURL, intervalTime + gap * 2)
-runService('MOBOs', 'MOBOs', 'mobo', moboURL, intervalTime + gap * 3)
-runService('CASEs', 'CASEs', 'case', caseURL, intervalTime + gap * 4)
-runService('RAMs', 'RAMs', 'ram', ramURL, intervalTime + gap * 5)
-runService('PSs', 'PSs', 'ps', psURL, intervalTime + gap * 6)
-runService('CPUFANs', 'CPUFANs', 'cpufan', cpufanURL, intervalTime + gap * 7)
-runService('FANs', 'FANs', 'fan', fanURL, intervalTime + gap * 8)
-runService('MONITORs', 'MONITORs', 'monitor', monitorURL, intervalTime + gap * 9)
-runService('MOUSEs', 'MOUSEs', 'mouse', mouseURL, intervalTime + gap * 10)
-runService('KEYBOARDs', 'KEYBOARDs', 'keyboard', keyboardURL, intervalTime + gap * 11)
+runService('ssd', ssdURL, intervalTime, 0)
+runService('gpu', gpuURL, intervalTime, gapTime)
+runService('cpu', cpuURL, intervalTime, gapTime * 2)
+runService('mobo', moboURL, intervalTime, gapTime * 3)
+runService('case', caseURL, intervalTime, gapTime * 4)
+runService('ram', ramURL, intervalTime, gapTime * 5)
+runService('ps', psURL, intervalTime, gapTime * 6)
+runService('cpufan', cpufanURL, intervalTime, gapTime * 7)
+runService('fan', fanURL, intervalTime, gapTime * 8)
+runService('monitor', monitorURL, intervalTime, gapTime * 9)
+runService('mouse', mouseURL, intervalTime, gapTime * 10)
+runService('keyboard', keyboardURL, intervalTime, gapTime * 11)
 
 const watcher = setInterval(() => {
-    console.log(`Estimated time left to next interval: ${intervalTime-(timeWatch * watchCounter)}`)
+    const date1 = dayjs(intervalTime)
+    const date2 = dayjs(intervalTime-(intervalTime-(watchTime * watchCounter)))
+    const diff = date1.subtract(date2)
+    console.log(`Estimated time left to next interval: ${diff.format('mm')} minutes, ${diff.format('ss')} seconds.`)
     watchCounter += 1
-    if (watchCounter > 6) watchCounter = 1
-}, timeWatch)
+    if (watchCounter > 3) watchCounter = 1
+}, watchTime)

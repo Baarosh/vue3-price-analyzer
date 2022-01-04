@@ -1,14 +1,16 @@
 import express from 'express';
+import path from 'path';
 
 function initializeExpress() {
-    const path = __dirname + '../../../dist'
+
+    const pathDist = path.join(__dirname + '../../../dist')
     const port = process.env.PORT || 5000
     const app = express()
 
-    app.use(express.static(path))
+    app.use(express.static(pathDist))
 
-    app.get('/', (request, response) => {
-        response.sendFile(path + "index.html")
+    app.get('/', (_request, response) => {
+        response.sendFile(path.join(pathDist + "/index.html"))
     })
 
     app.listen(port, () => {

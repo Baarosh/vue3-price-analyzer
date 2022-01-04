@@ -1,5 +1,0 @@
-REFACTOR
-1. przeniesc server.js do server folderu
-2. zmienic time left z milisekund na minuty
-3. refactor funkcji
-DONE 4. zmienic timestamp

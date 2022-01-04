@@ -1,5 +1,7 @@
 import { get } from 'http'
 
+const timeInterval = 1 * 1000 * 60 * 20
+
 function initializeNoIdle() {
     setInterval(function() {
         var options = {
@@ -7,11 +9,9 @@ function initializeNoIdle() {
             port: 80,
             path: '/'
         };
-        get(options, function(res) {
-            res.on('data', function(chunk) {
+        get(options, function(response) {
+            response.on('data', function(_chunk) {
                 try {
-                    // optional logging... disable after it's working
-                    console.log("HEROKU RESPONSE: " + chunk);
                 } catch (err) {
                     console.log(err.message);
                 }
@@ -19,7 +19,7 @@ function initializeNoIdle() {
         }).on('error', function(err) {
             console.log("Error: " + err.message);
         });
-    }, 20 * 60 * 1000); // load every 20 minutes
+    }, timeInterval);
 }
 
 export default initializeNoIdle

@@ -13,11 +13,11 @@ export async function uploadToMySQL(collectionName, data, connection) {
         const dimName = `d_${collectionName}`
         const factName = `f_${collectionName}`
 
-        await connection.promise().query('INSERT INTO ?? (productId, productName) VALUES ? ON DUPLICATE KEY UPDATE productName = VALUES (productName)',
-        [dimName, dimData]);
+        // await connection.promise().query('INSERT INTO ?? (productId, productName) VALUES ? ON DUPLICATE KEY UPDATE productName = VALUES (productName)',
+        // [dimName, dimData]);
 
-        await connection.promise().query('INSERT INTO ?? (productId, productPrice, timeStamp) VALUES ?',
-        [factName, factData]);
+        // await connection.promise().query('INSERT INTO ?? (productId, productPrice, timeStamp) VALUES ?',
+        // [factName, factData]);
 
     } catch(e) {
         console.log(e)
